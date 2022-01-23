@@ -179,8 +179,8 @@ while running:
 			# Checking patterns
 			if sorted(input_pattern) == sorted(new_pattern):
 				score += 1
-				if score > hiscore:
-					hiscore = score
+				if score > hi_score:
+					hi_score = score
 				if level < 6:
 					level += 1
 					tile_size = int(tile_size - tile_size / SHRINKAGE)
