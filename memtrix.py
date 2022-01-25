@@ -2,12 +2,12 @@ import pygame
 import random
 import time
 
-WIDTH = 500
-HEIGHT = 500
-FONTSIZE = 20
-SHOWTIME = 500
-SHRINKAGE = 7
-TIMER = 10
+WIDTH = 600
+HEIGHT = 600
+FONTSIZE = 30
+SHOWTIME = 1000
+SHRINKAGE = 9
+TIMER = 60
 FPS = 30
 
 WHITE = (255, 255, 255)
@@ -79,7 +79,7 @@ def drawBoard():
 	win.fill(BLUE)
 	drawText(f'Score: {score}', 20, 10, WHITE)
 	drawText(f'Level: {level-2}', 'center', 10, LIME)
-	drawText(f'Best: {hi_score}', WIDTH-100, 10, WHITE)
+	drawText(f'Best: {hi_score}', WIDTH-130, 10, WHITE)
 	# Drawing Table
 	for row in range(level):
 		for col in range(level):
@@ -88,7 +88,7 @@ def drawBoard():
 	# Drawing border
 	board_size = tile_size * level
 	left, top = getLeftTop(0, 0)
-	pygame.draw.rect(win, RED, (left-5, top-5, board_size+6, board_size+6), 4)
+	pygame.draw.rect(win, RED, (left-5, top-5, board_size+7, board_size+7), 4)
 	# Drawing timer
 	time_ratio = timestamp['timer'] / TIMER		# e.g. if 30 / 60, length will be half of screen
 	pygame.draw.rect(win, LIME, (0, HEIGHT-8, int(WIDTH*(1-time_ratio)), 8))
@@ -166,6 +166,7 @@ while running:
 				lightUp(row, col, YELLOW)
 			else:
 				lightUp(row, col, RED)
+		drawText(f'Recalling the pattern ({len(new_pattern)-len(input_pattern)})...', 'center', HEIGHT-60, WHITE)
 		pygame.display.update()
 		# Checking if input sequence completed
 		if len(input_pattern) == len(new_pattern):
@@ -174,20 +175,22 @@ while running:
 			# Displaying the correct pattern (& wrong ones)
 			for (row, col) in new_pattern:
 				lightUp(row, col, YELLOW)
-			pygame.display.update()
-			pygame.time.wait(SHOWTIME)
 			# Checking patterns
 			if sorted(input_pattern) == sorted(new_pattern):
-				score += 1
+				score += level-2
 				if score > hi_score:
 					hi_score = score
-				if level < 6:
+				if level < 8:
 					level += 1
 					tile_size = int(tile_size - tile_size / SHRINKAGE)
 			else:
 				if level > 3:
+					if score > 0: 
+						score -= 1
 					level -= 1
 					tile_size = int(tile_size + tile_size / SHRINKAGE)
+			pygame.display.update()
+			pygame.time.wait(SHOWTIME)
 	# if not waiting then display new pattern
 	elif not waiting_input and not timer_up:
 		timer_paused = True
@@ -200,6 +203,7 @@ while running:
 		new_pattern = generatePattern()
 		for (row, col) in new_pattern:
 			lightUp(row, col, YELLOW)
+		drawText('Memorize this pattern.', 'center', HEIGHT-60, WHITE)
 		pygame.display.update()
 		pygame.time.wait(SHOWTIME)
 		waiting_input = True
